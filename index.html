@@ -1,1 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>FixMyBike — Complete Bike Repair Library (40 Tutorials)</title>
+<meta name="description" content="40 detailed bike repair tutorials with step-by-step instructions, tools, safety tips, search and filters.">
+<style>
+  :root{
+    --primary:#2b6ef6;
+    --accent:#ffb84d;
+    --bg:#f4f6fb;
+    --card:#ffffff;
+    --text:#0f1724;
+    --muted:#6b7280;
+    --glass: rgba(255,255,255,0.6);
+    --radius:12px;
+  }
+  [data-theme="dark"]{
+    --primary:#4fa0ff;
+    --accent:#ffbe7a;
+    --bg:#071028;
+    --card:#071522;
+    --text:#e6eef8;
+    --muted:#9aa7bf;
+    --glass: rgba(255,255,255,0.03);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    line-height:1.5;
+    transition:background .25s,color .25s;
+  }
 
+  header.site-header{
+    background: linear-gradient(135deg,var(--primary), #1b5cbf);
+    color:white;
+    padding:28px 16px;
+    position:sticky;
+    top:0;
+    z-index:40;
+    box-shadow: 0 8px 20px rgba(0,0,0,.12);
+  }
+  header.site-header .wrap{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:space-between}
+  header h1{margin:0;font-size:20px}
+  header p{margin:0;opacity:.95;font-size:13px}
+
+  .top-controls{display:flex;gap:10px;align-items:center}
+  .mini-nav{
+    margin:14px auto;
+    width:min(1200px,96%);
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:space-between;
+  }
+
+  .searchbar{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .searchbar input[type="search"]{
+    padding:10px 12px;border-radius:10px;border:1px solid rgba(0,0,0,0.08);width:360px;background:var(--glass);
+    color:var(--text)
+  }
+  .searchbar select{padding:10px;border-radius:10px;border:1px solid rgba(0,0,0,0.08);background:var(--card)}
+  button.btn{
+    background:var(--primary);color:white;border:0;padding:9px 12px;border-radius:10px;cursor:pointer;font-weight:700;
+    box-shadow:0 8px 18px rgba(43,110,246,0.18);
+  }
+  button.ghost{
+    background:transparent;border:1px solid rgba(0,0,0,.06);padding:9px 10px;border-radius:10px;cursor:pointer;
+  }
+  .controls-right{display:flex;gap:8px;align-items:center}
+
+  .main{
+    width:min(1200px,96%);
+    margin:22px auto;
+    display:grid;
+    grid-template-columns:280px 1fr;
+    gap:20px;
+  }
+
+  aside.toc{
+    position:sticky;top:110px;
+    background:var(--card);
+    padding:14px;border-radius:var(--radius);
+    box-shadow: 0 10px 30px rgba(2,6,23,0.06);
+    max-height: calc(100vh - 150px);
+    overflow:auto;
+  }
+  aside.toc h3{margin:0 0 10px 0;color:var(--primary);font-size:15px}
+  aside.toc a{display:block;padding:8px;border-radius:8px;text-decoration:none;color:var(--text);margin:6px 0;font-size:14px}
+  aside.toc a:hover{background:rgba(0,0,0,0.04)}
+
+  .library{
+    min-height:60vh;
+  }
+
+  .library-header{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}
+  .meta{color:var(--muted);font-size:13px}
+
+  .guide-card{
+    margin-bottom:14px;border-radius:12px;overflow:hidden;background:var(--card);
+    box-shadow: 0 8px 26px rgba(2,6,23,0.06);border:1px solid rgba(0,0,0,0.04);
+    transition:transform .16s,box-shadow .16s;
+  }
+  .guide-card:hover{transform:translateY(-6px);box-shadow:0 18px 48px rgba(2,6,23,0.09)}
+  .guide-head{
+    display:flex;gap:12px;align-items:center;padding:14px 16px;cursor:pointer;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
+  }
+  .guide-head h4{margin:0;font-size:16px}
+  .guide-head .meta-tags{margin-left:auto;color:var(--muted);font-size:13px}
+  .guide-body{padding:0 16px;max-height:0;overflow:hidden;transition:max-height .45s cubic-bezier(.2,.9,.35,1),padding .25s}
+  .guide-body.open{padding:16px;max-height:1500px}
+  .guide-body ol{margin:0 0 8px 18px}
+  .tools{display:inline-block;padding:6px 8px;background:rgba(43,110,246,0.08);border-radius:8px;font-weight:700;color:var(--primary);margin-bottom:8px}
+  .safety{display:block;margin-top:6px;font-style:italic;color:var(--muted)}
+
+  .controls-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  footer.site-footer{margin:36px auto 80px;width:min(1200px,96%);text-align:center;color:var(--muted)}
+  #backToTop{position:fixed;right:20px;bottom:20px;padding:12px 14px;border-radius:10px;background:var(--primary);color:white;border:0;cursor:pointer;box-shadow:0 10px 30px rgba(0,0,0,0.18);z-index:50;display:none}
+
+  @media (max-width:980px){
+    .main{grid-template-columns:1fr}
+    aside.toc{position:relative;top:auto;max-height:none;margin-bottom:12px}
+    .searchbar input[type="search"]{width:220px}
+  }
+</style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <div>
+        <h1>FixMyBike — Complete Bike Repair Library</h1>
+        <p style="margin-top:6px;font-size:13px">40 detailed tutorials — step-by-step instructions, tools, safety notes, search & filters</p>
+      </div>
+      <div class="top-controls">
+        <div style="font-size:13px;color:rgba(255,255,255,0.95)">Pro tip: use search and filters to find exact fixes fast</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="mini-nav">
+    <div class="searchbar" style="margin-left:auto; margin-right:auto; width:min(1200px,96%); justify-content:space-between">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <input id="searchInput" type="search" placeholder="Search tutorials, tools, steps, e.g. 'flat', 'bleed', 'chain'" aria-label="Search tutorials">
+        <select id="categoryFilter" aria-label="Filter by category">
+          <option value="all">All categories</option>
+        </select>
+        <select id="toolFilter" aria-label="Filter by tool">
+          <option value="all">All tools</option>
+        </select>
+      </div>
+      <div class="controls-right">
+        <button class="btn" id="expandAllBtn">Expand all</button>
+        <button class="ghost" id="collapseAllBtn">Collapse all</button>
+        <button class="ghost" id="copyLinkBtn" title="Copy page link">Copy link</button>
+        <button class="ghost" id="themeToggle">Toggle theme</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="main" role="main">
+    <aside class="toc" aria-label="Table of contents">
+      <h3>Contents</h3>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:10px">Visible results: <strong id="resultCount">40</strong></div>
+      <nav id="tocList"></nav>
+    </aside>
+
+    <section class="library" id="library">
+      <div class="library-header">
+        <div>
+          <h2 style="margin:0">40 Tutorials — Full Repair Manual</h2>
+          <div class="meta">Every guide includes tools, safety notes and detailed steps.</div>
+        </div>
+        <div class="controls-row">
+          <div class="meta">Filter + search results update instantly.</div>
+        </div>
+      </div>
+
+      <!-- Guides will be injected here by JS -->
+    </section>
+  </main>
+
+  <footer class="site-footer">© 2025 FixMyBike — Built for riders by riders</footer>
+
+  <button id="backToTop" title="Back to top">⬆</button>
+
+<script>
+/* -------------------------
+   DATA: 40 tutorials (detailed steps)
+   ------------------------- */
+const tutorials = [
+  {
+    id: "g1",
+    title: "Fix a Flat Tire (Tube) — Complete Procedure",
+    category: "Tires & Tubes",
+    tools: ["Tire levers","Spare tube or patch kit","Floor pump","Gloves"],
+    safety: "Work on a stable surface; avoid sharp glass; keep fingers away from bead.",
+    steps:[
+      "Remove wheel: release quick-release or undo axle nuts. For rear wheel shift into smallest cog first to make removal easier.",
+      "Deflate fully and use tire levers to unseat one side of the tire from the rim. Work slowly to avoid pinching the tube.",
+      "Pull the inner tube out and inspect the inside of the tire and rim strip for the cause (glass, thorn, sharp spoke end).",
+      "If patching: inflate tube slightly to find puncture, mark it, sand around the hole, apply glue, place patch, press firmly and wait according to patch instructions.",
+      "If replacing: fit new tube partially inflated at the valve, tuck tube inside the tire ensuring no twists; seat the bead back onto the rim starting opposite the valve.",
+      "Inflate to low pressure first, check the bead seating and tube pinch points, then inflate to recommended PSI.",
+      "Reinstall wheel, tighten quick-release or axle nuts, check wheel alignment and spin to ensure it’s seated correctly.",
+      "Final test ride short distance to ensure no slow leak; carry a spare tube and pump on rides."
+    ]
+  },
+  {
+    id: "g2",
+    title: "Tubeless Tire Repair & Sealant Refresh",
+    category: "Tires & Tubes",
+    tools: ["Tubeless repair kit (plugs)","Sealant syringe","Floor pump or CO₂","Valve core remover"],
+    safety: "Avoid overinflating; wear eye protection when using CO₂.",
+    steps:[
+      "Identify puncture while wheel is inflated. Small holes may be sealed by sealant; larger ones need plug insertion.",
+      "If object is still embedded, remove it cleanly. For small punctures, top up sealant via valve core; remove core first.",
+      "For larger punctures, use the T-handle insertion tool to push a plug into the hole, then trim excess plug flush with tyre.",
+      "Re-inflate to seat tyre and spin wheel to allow sealant to coat internal surface.",
+      "Check for leaks using soapy water around the bead and puncture area or by listening.",
+      "Top up sealant quantity per tyre volume (follow manufacturer guidance) and replace valve core if removed.",
+      "Monitor tyre over next few rides; replace tyre if plug fails repeatedly or sidewall damage exists."
+    ]
+  },
+  {
+    id: "g3",
+    title: "Replace Inner Tube (Presta & Schrader)",
+    category: "Tires & Tubes",
+    tools: ["New tube (correct valve type)","Tire levers","Pump","Valve adapter (if needed)"],
+    safety: "Use the correct valve type; don’t over-tighten valve nuts.",
+    steps:[
+      "Remove the wheel and deflate the old tube fully. Unscrew Presta valve collar if present.",
+      "Use tire levers to unseat the bead and remove one side of the tyre from the rim.",
+      "Remove the old tube and inspect inside of tyre and rim strip for sharp objects.",
+      "Partially inflate the new tube so it holds shape and insert valve through rim.",
+      "Seat new tube into tyre evenly, push the bead back onto rim starting opposite valve and working both sides carefully.",
+      "Inflate to recommended pressure and check that tyre bead is seated evenly around the rim.",
+      "Reinstall wheel, test spin and brakes, and take a short ride to verify everything."
+    ]
+  },
+  {
+    id: "g4",
+    title: "True a Wheel — Basic Lateral & Radial Truing",
+    category: "Wheels & Spokes",
+    tools: ["Spoke wrench (correct size)","Truing stand or bike frame","Marker or zip tie to detect wobble"],
+    safety: "Make very small spoke adjustments; wear gloves to protect hands from spoke ends.",
+    steps:[
+      "Mount the wheel in a truing stand or on the bike with brake pad marker in place to observe wobble.",
+      "Identify high (rim pulled toward pad) and low (away from pad) spots by spinning slowly.",
+      "For lateral wobbles: tighten spokes on the side opposite the wobble (quarter-turn increments) or loosen the side towards the wobble.",
+      "For radial dips (out-of-round): tighten spokes on both sides at the affected area to pull rim outward slightly.",
+      "Always make small adjustments and recheck frequently; a full-turn can over-correct.",
+      "After lateral/radial adjustments, check tension across spokes and ensure no spokes are extremely loose compared to others.",
+      "Spin wheel and test ride; if major damage or broken spokes exist, replace spoke or consult a wheelbuilder."
+    ]
+  },
+  {
+    id: "g5",
+    title: "Replace Rim Brake Pads & Set Toe-in",
+    category: "Brakes",
+    tools: ["Allen keys or appropriate wrench","New brake pads","Flat screwdriver for fine adjustment"],
+    safety: "Keep pads free of oil and grease; avoid touching braking surface with bare hands.",
+    steps:[
+      "Open brake quick-release or remove wheel to gain access to brake pads.",
+      "Loosen pad retaining bolt and remove the old pad assemblies.",
+      "Clean the braking surface of rim with isopropyl alcohol and a clean rag if contaminated.",
+      "Install new pads and position with a slight 'toe-in' — front of pad touches the rim a hair before rear to reduce squeal.",
+      "Ensure pads contact the rim fully and not the tyre; tighten pad bolts to recommended torque.",
+      "Squeeze the brake lever and check even contact on both sides; adjust cable tension or centering if needed.",
+      "Bed in new pads by performing several moderate stops to transfer pad material to the rim for optimal performance."
+    ]
+  },
+  {
+    id: "g6",
+    title: "Replace Hydraulic Disc Brake Pads (Install & Bed-in)",
+    category: "Brakes",
+    tools: ["Hex/torx for caliper pin","Needle-nose pliers","Plastic tyre lever to push piston back"],
+    safety: "Keep brake fluid away from paint/skin; avoid contaminating pads/rotors with oil.",
+    steps:[
+      "Remove wheel and take out retaining pin or clip securing pads, then remove old pads carefully.",
+      "Push piston back gently using a plastic tyre lever or suitable tool (protect piston surface) to make room for new pads.",
+      "Insert new pads and re-secure the retaining pin or clip. Ensure pads sit square and without foreign debris.",
+      "Reinstall wheel and check rotor alignment; spin wheel to ensure no pad rubbing.",
+      "Perform pad bed-in: 10 controlled stops from moderate speed (do not lock wheel) to transfer a layer of pad material to the rotor.",
+      "After bed-in, check lever feel and braking power. If spongy, bleed brakes per manufacturer instructions.",
+      "Inspect for contamination; if pads or rotors are contaminated with oil, replace pads and clean or replace rotor as needed."
+    ]
+  },
+  {
+    id: "g7",
+    title: "Bleeding Hydraulic Brakes (General Guide)",
+    category: "Brakes",
+    tools: ["Brake-specific bleed kit","Correct brake fluid (DOT or mineral as specified)","Syringe and tubing","Wrenches"],
+    safety: "Use correct fluid type; DOT and mineral oils are not interchangeable. Wear gloves and protect paintwork.",
+    steps:[
+      "Consult manufacturer bleed procedure; mount bike securely and remove wheel and pads if instructed.",
+      "Attach tubing to caliper bleed nipple and open bleed port at lever or remote reservoir.",
+      "Fill syringe with clean fluid, attach to caliper side (or lever side depending on system) and slowly push fluid towards lever side while operating lever to release air.",
+      "Close bleed nipple while maintaining fluid movement to avoid sucking air back in, then top up reservoir and secure cap.",
+      "Repeat until lever feels firm and no air bubbles appear in tubing/syringe.",
+      "Clean any spilled brake fluid from components immediately with isopropyl alcohol and re-install pads/wheel.",
+      "Test brake firmness at standstill before riding; if softness persists do another bleed or consult service instructions."
+    ]
+  },
+  {
+    id: "g8",
+    title: "Adjust Cable (Mechanical) Disc Brakes & V-Brakes",
+    category: "Brakes",
+    tools: ["Allen keys","Pliers","Cable cutters","5mm hex or appropriate wrench"],
+    safety: "Ensure cable ends are capped to avoid fraying; test before riding.",
+    steps:[
+      "Check brake lever free-play and cable routing for sharp bends or damaged housing.",
+      "If pads are too far from rotor/rim, use barrel adjuster at lever or caliper to increase tension.",
+      "At caliper, loosen cable pinch bolt, pull cable tight and retighten bolt while holding tension.",
+      "Fine-tune by turning barrel adjuster and test lever feel until braking is firm and pads retract correctly.",
+      "Trim cable excess and fit a crimped end cap to prevent fraying.",
+      "Check pad alignment and replace worn pads; re-test under controlled conditions."
+    ]
+  },
+  {
+    id: "g9",
+    title: "Tune Rear Derailleur Indexing (Precise Shifting)",
+    category: "Gears & Chain",
+    tools: ["Phillips screwdriver","Needle-nose pliers","Hex keys","Bike stand helpful"],
+    safety: "Shift gently when testing; avoid forcing chain past limit screws.",
+    steps:[
+      "Shift to smallest cog and check cable tension. If cable is too loose, shift to smallest cog and pull slack, then tighten pinch bolt.",
+      "Adjust high (H) and low (L) limit screws so the derailleur cannot push chain off either end of cassette.",
+      "Use barrel adjuster to fine-tune indexing: turn clockwise to reduce tension, counter-clockwise to increase.",
+      "Shift up through gears one by one while pedaling slowly; if it hesitates to move up, increase tension slightly.",
+      "If it hesitates to move down, reduce tension a bit. Make small adjustments and re-check.",
+      "Check B-tension screw to set jockey wheel clearance for smooth shifts on largest cogs.",
+      "Test under light load and then real-ride test with cautious upshifts/downshifts."
+    ]
+  },
+  {
+    id: "g10",
+    title: "Replace Cassette / Freewheel",
+    category: "Gears & Chain",
+    tools: ["Chain whip","Cassette lockring tool","Adjustable wrench or socket wrench"],
+    safety: "Secure wheel and use correct tools to avoid slippage and injuries.",
+    steps:[
+      "Remove rear wheel and lock it in a vice or hold securely. Insert lockring tool into cassette lockring.",
+      "Fit chain whip to hold cassette from spinning and turn lockring tool counter-clockwise with wrench to loosen lockring.",
+      "Remove the lockring and slide cassette off freehub splines. Clean splines and freehub body.",
+      "Slide new cassette onto splines ensuring correct orientation; some cassettes have a spacer or micro-spline differences.",
+      "Thread lockring by hand and torque to manufacturer spec with torque wrench if available.",
+      "Reinstall wheel and check shifting across all gears; adjust indexing if necessary.",
+      "If wheel had a freewheel (older bikes), use the correct freewheel tool and technique for removal/installation."
+    ]
+  },
+  {
+    id: "g11",
+    title: "Replace Chain (Lengthing & Joining)",
+    category: "Gears & Chain",
+    tools: ["Chain tool","Master link pliers or connector pin","Chain wear checker"],
+    safety: "Keep fingers clear of pinch points on chain tool; wear gloves if needed.",
+    steps:[
+      "Measure replacement chain: match length to old chain or use big-big plus two links method (chain over largest chainring and largest cog then add two links).",
+      "Remove old chain using chain tool or quick link pliers if equipped with a master link.",
+      "Lay out new chain and determine exact link length and where to break using chain tool.",
+      "Use chain tool to drive pin partially or fully per the chain type; for quick links, bring both ends together and use master link pliers to connect.",
+      "If manufacturer requires a joining pin (not quick link), use the special joining pin and set it flush as recommended.",
+      "Rotate pedals and shift through gears to check for stiff links; flex any stiff link across a chain tool to loosen slightly.",
+      "Lubricate chain and wipe excess. Re-check shifting performance on a test ride."
+    ]
+  },
+  {
+    id: "g12",
+    title: "Replace/Service Bottom Bracket (Cartridge)",
+    category: "Bottom Bracket & Cranks",
+    tools: ["Bottom bracket tool (for cartridge)","Crank puller","Torque wrench","Grease"],
+    safety: "Use correct tools and torque specs to avoid damaging threads or crank arms.",
+    steps:[
+      "Remove cranks using appropriate crank puller or integrated tool. Keep track of spacers and washers.",
+      "Use BB tool to unscrew old cartridge bottom bracket from both sides (note drive/non-drive orientation).",
+      "Clean threads in the shell and apply grease to threads or anti-seize if recommended.",
+      "Thread in new cartridge bottom bracket by hand to avoid cross-threading; tighten with BB tool to manufacturer torque.",
+      "Reinstall crank arms and torque bolts/nuts to the specified values.",
+      "Spin cranks to check for play or binding; if play exists re-check preload and torque.",
+      "Test ride and re-check after a short interval to ensure everything settled correctly."
+    ]
+  },
+  {
+    id: "g13",
+    title: "Replace Pedals & Torque (L/R Threads)",
+    category: "General Maintenance",
+    tools: ["Pedal wrench or 15mm spanner","Grease","Torque wrench if available"],
+    safety: "Note left pedal has reverse thread (counter-intuitive).",
+    steps:[
+      "Identify left and right pedals (L and R markings). Left pedal tightens counter-clockwise (reverse thread), right pedal tightens clockwise.",
+      "Apply a thin layer of grease to pedal threads to prevent seizing and corrosion.",
+      "Thread the pedal by hand first to avoid cross-threading; then use pedal wrench to tighten firmly to spec.",
+      "If using a torque wrench, tighten to manufacturer's torque spec (common values ~25-35 Nm depending on pedal).",
+      "Check pedal rotation for smooth bearings; if pedals feel rough, service pedal bearings or replace.",
+      "Re-check after a short ride; retorque if necessary after initial settling.",
+      "Inspect crank threads for damage; replace crank if threads are stripped."
+    ]
+  },
+  {
+    id: "g14",
+    title: "Headset Adjustment & Preload",
+    category: "Headset & Steering",
+    tools: ["Allen keys","Torque wrench","Grease"],
+    safety: "Avoid over-tightening; steering should remain smooth with no play.",
+    steps:[
+      "Loosen stem pinch bolts while leaving top cap slightly loose so you can adjust preload.",
+      "Tighten the top cap bolt until headset play is removed but steering remains free and smooth — do small turns.",
+      "Re-align handlebars with front wheel and then tighten stem pinch bolts to correct torque spec evenly.",
+      "Check for any binding when turning; if binding present, slightly loosen top cap and re-adjust.",
+      "Re-check headset by holding front brake and rocking bike back-and-forth to detect play.",
+      "If bearings are rough or damaged, disassemble headset, inspect bearings, clean and regrease or replace as necessary.",
+      "Final torque stem bolts to manufacturer spec and perform short ride test."
+    ]
+  },
+  {
+    id: "g15",
+    title: "Saddle Replacement & Setup (Fit Basics)",
+    category: "General Maintenance",
+    tools: ["Allen keys or wrench for seatpost clamp","Torque wrench (recommended)"],
+    safety: "Set initial saddle height conservatively; ensure clamp torque prevents slipping.",
+    steps:[
+      "Loosen seatpost clamp and remove old saddle if present.",
+      "Transfer rails and any mounting hardware as required or install new saddle on rails.",
+      "Position saddle fore-aft so the nose aligns with your knee-over-pedal-spindle reference (adjust per personal fit).",
+      "Set tilt: start level, then fine-tune +/- a few degrees for comfort.",
+      "Adjust height based on leg extension (heel on pedal at bottom stroke with leg straight as a guide), then fine-tune while riding.",
+      "Tighten seatpost clamp to correct torque; for carbon components use carbon paste, for alloy use grease.",
+      "Re-check after a short ride and adjust small increments for comfort."
+    ]
+  },
+  {
+    id: "g16",
+    title: "Wrap Drop Bar Tape / Install Grips",
+    category: "Cockpit & Controls",
+    tools: ["Bar tape","Scissors","Electrical tape","Grip glue or isopropyl alcohol (for lock-on grips)"],
+    safety: "Wrap neatly to avoid bunching; secure ends properly.",
+    steps:[
+      "Remove old tape and clean bars; remove any residue and ensure bar-end plugs are available.",
+      "Start at the bar end with a small overlap and keep tension consistent as you wrap toward the stem.",
+      "For drop bars, use figure-eight pattern across the brake hoods for smooth transition.",
+      "Finish near the stem, cut tape cleanly, secure with finishing tape or supplied adhesive strip.",
+      "Insert bar-end plugs firmly to hold tape ends and protect hands from exposed edges.",
+      "For lock-on grips: slide on with isopropyl alcohol to clean surface and tighten clamp bolts per manufacturer torque.",
+      "Test grip comfort and re-wrap if uneven or loose."
+    ]
+  },
+  {
+    id: "g17",
+    title: "Suspension Setup — Fork & Shock Basic",
+    category: "Suspension",
+    tools: ["Shock pump","Sag meter or ruler","Manufacturer sag chart"],
+    safety: "Do not exceed recommended pressure ranges; check seals for leaks.",
+    steps:[
+      "Set sag: sit on the bike (with riding kit) and measure travel sag — typical fork sag is 15-30% travel depending on discipline.",
+      "Adjust air pressure on fork/shock with shock pump to reach recommended sag.",
+      "Set rebound damping per manufacturer start point and test ride to adjust to rider preference.",
+      "Adjust compression settings if available for terrain conditions.",
+      "Make incremental changes and test ride each step; keep notes to return to a baseline.",
+      "If fork feels too soft or harsh, check air volume spacers or service intervals—suspension may need servicing.",
+      "Follow manufacturer service intervals for damper and air spring maintenance."
+    ]
+  },
+  {
+    id: "g18",
+    title: "Diagnose & Fix Chain Rub / Noise",
+    category: "Gears & Chain",
+    tools: ["Allen keys","Park tool hanger alignment gauge (optional)","Truing stand optional"],
+    safety: "Do gentle tests in stand; do not allow chain to catch hands.",
+    steps:[
+      "Identify where noise occurs by spinning drivetrain and shifting through cogs slowly.",
+      "Check derailleur hanger alignment; bent hanger is a common cause and may need straightening or replacement.",
+      "Set limit screws to ensure chain is not over-reaching beyond cogs.",
+      "Use barrel adjuster to fine-tune indexing for crisp shifts and to remove chain rub.",
+      "Check B-tension to maintain proper upper jockey wheel spacing for the cassette range.",
+      "Inspect chain wear and cassette wear—worn components often cause poor indexing and noise; replace if needed.",
+      "After adjustments, perform test ride and re-evaluate under load."
+    ]
+  },
+  {
+    id: "g19",
+    title: "Service Loose Cup & Cone Hub Bearings",
+    category: "Wheels & Spokes",
+    tools: ["Cone spanners","Grease","Clean rags","Adjusting wrench"],
+    safety: "Keep bearings and grease clean; work on a flat surface.",
+    steps:[
+      "Remove wheel and axle; take note of spacer arrangement and orientation of cones and cups.",
+      "Carefully unscrew cone nuts and remove cones, taking care not to lose loose bearings (or remove sealed bearings as a unit).",
+      "Inspect bearings and cups for pitting; replace any pitted bearings or cups.",
+      "Pack new grease into the hub shell and on bearings, reassemble cones and axle while setting preload to remove play but not bind.",
+      "Spin wheel to ensure smooth rotation and check for play by wiggling rim side to side.",
+      "Re-install wheel and check again; repeat adjustment as necessary.",
+      "If hub uses sealed bearings and is worn, replace bearings or hub cartridge per hub type."
+    ]
+  },
+  {
+    id: "g20",
+    title: "Replace Integrated Headset Bearings",
+    category: "Headset & Steering",
+    tools: ["Headset press or bearing press","Crown race setter","Grease"],
+    safety: "Press bearings squarely to avoid damage; follow headset manufacturer orientation.",
+    steps:[
+      "Remove stem and fork, then press out old bearings using an appropriate drift or press.",
+      "Clean the headtube and crown race seating surfaces thoroughly.",
+      "Lightly grease the bearing seats; orient bearings per manufacturer (sealed/open).",
+      "Use a headset press to install new bearings squarely into cups to avoid binding.",
+      "Install crown race on fork and slide fork back into headtube, set top cap and preload per headset instructions.",
+      "Re-torque stem and top cap correctly and check for smooth steering without play.",
+      "If any roughness exists, disassemble and re-check seating and bearing type/orientation."
+    ]
+  },
+  {
+    id: "g21",
+    title: "Diagnose Squeaky Noises — Methodical Approach",
+    category: "General Maintenance",
+    tools: ["Rag","Lubricant","Socket set","Zip ties"],
+    safety: "Isolate sound safely; use short test rides in low-risk areas.",
+    steps:[
+      "Isolate noise by lifting bike and spinning components (wheels, cranks, pedals) separately to locate source.",
+      "Listen closely and use a mechanic's stethoscope or a length of hose to amplify sound location.",
+      "Common culprits: seatpost, pedals, bottom bracket, headset, fender mounts, rack bolts. Check and tighten all fasteners to spec.",
+      "Apply lubricant to creaking metal-on-metal points (seatpost, pedals if appropriate) and replace or service worn components.",
+      "If squeak persists under load, try removing components one-by-one to narrow down source.",
+      "When in doubt, clean contact surfaces and reassemble with grease or anti-seize where appropriate.",
+      "Document where the noise was found and fix; retest thoroughly after the repair."
+    ]
+  },
+  {
+    id: "g22",
+    title: "Install Fenders & Racks (Fit & Clearance)",
+    category: "Accessories",
+    tools: ["Allen keys","Pile of washers/ spacers","Drill & rivets (occasionally)"],
+    safety: "Ensure clearance from tyres and brakes; do not trap cables.",
+    steps:[
+      "Check frame/fork for available mounting points and eyelets; if none, use seatpost-mounted solutions with caution.",
+      "Measure tyre width and select fender width accordingly; allow ~6-10mm clearance each side for mud and flex.",
+      "Install rear rack following manufacturer instructions; check strap placement and torque points.",
+      "Fit fenders from front to rear, adjust stay length and angle to avoid rubbing with wheel under suspension movement.",
+      "Use washers or spacers to align and eliminate contact points with frame or brake calipers.",
+      "Trim or fold excess stays and secure with locknuts or clamps; double-check at full compression (if suspension).",
+      "Do a test ride to check for rubbing and adjust as needed."
+    ]
+  },
+  {
+    id: "g23",
+    title: "Replace Brake Rotors (Disc) & Torque",
+    category: "Brakes",
+    tools: ["Torx or hex driver (T25 common)","Torque wrench or correct bit","Isopropyl alcohol"],
+    safety: "Clean rotors with alcohol; do not touch braking surface after cleaning.",
+    steps:[
+      "Remove wheel and unscrew rotor bolts in a star pattern to avoid warping.",
+      "Clean hub interface and ensure rotor mating surface is free of debris.",
+      "Place new rotor on hub and finger-tighten bolts in a star pattern to seat rotor.",
+      "Torque bolts to manufacturer specification in a star pattern to ensure even seating.",
+      "Wipe rotor with isopropyl alcohol to remove any fingerprints or oils.",
+      "Reinstall wheel and check rotor runout; slight runout can be corrected by minor spoke/bolt adjustments or by rotor truing tools.",
+      "Bed in rotor with controlled braking to transfer pad material and avoid glazing."
+    ]
+  },
+  {
+    id: "g24",
+    title: "Replace Shifter Cable & Housing",
+    category: "Gears & Chain",
+    tools: ["Cable cutters","New cables & housing","Ferrules & end caps","9mm or hex keys"],
+    safety: "Cut housing cleanly; fit ferrules to prevent fraying and wear.",
+    steps:[
+      "Shift to the smallest gear and remove old cable by unbolting at derailleur and pulling through shifter.",
+      "Measure and cut housing sections to the same lengths as old ones ensuring smooth curves and no kinks.",
+      "Install ferrules on housing ends and route new cable through shifter and housing.",
+      "Bolt cable at derailleur leaving slight slack for adjustment; use barrel adjuster to fine-tune.",
+      "Trim excess cable and crimp a cable end cap to prevent fraying.",
+      "Shift through all gears and make indexing adjustments using the barrel adjuster or limit screws as needed.",
+      "Lubricate cable lightly if exposed and check operation over a test ride."
+    ]
+  },
+  {
+    id: "g25",
+    title: "Install New Crankset (Bolt-on or Self-extracting)",
+    category: "Bottom Bracket & Cranks",
+    tools: ["Crank puller or compatible tool","Torque wrench","Bottom bracket tool (if replacing BB)","Grease"],
+    safety: "Use correct torque on crank bolts to avoid loosening or damage.",
+    steps:[
+      "Remove old cranks using crank puller or self-extracting method; inspect spindle for wear or damage.",
+      "If replacing bottom bracket, remove and install new BB per earlier guide, torque to spec.",
+      "Grease splines or spindle areas as recommended by manufacturer.",
+      "Slide new crankset onto spindle, align chainrings and spacers properly, and tighten crank bolts to torque spec.",
+      "Install chain and check chainline; adjust spacers if necessary to avoid cross-chaining issues.",
+      "Rotate crank and check for play or binding; re-torque after initial ride per manufacturer's advice.",
+      "Verify front derailleur height and limit screw settings after crank/chainring change."
+    ]
+  },
+  {
+    id: "g26",
+    title: "Seatpost Removal, Grease & Carbon Safety",
+    category: "General Maintenance",
+    tools: ["Allen keys","Carbon assembly paste (if carbon post)","Grease (if alloy)"],
+    safety: "For carbon components use carbon paste; avoid over-tightening clamp bolts.",
+    steps:[
+      "Loosen seatpost clamp and attempt to remove seatpost; if seized, apply penetrating oil and let soak.",
+      "If still stuck, try twisting while pulling and use heat cautiously; avoid hammering.",
+      "Clean inside of seat tube and seatpost if removing; inspect for corrosion or damage.",
+      "Apply carbon assembly paste for carbon-on-carbon or grease for alloy to prevent future seizing.",
+      "Reinsert seatpost to desired height, set rotation, and torque clamp bolts evenly to spec.",
+      "If dropper post, bleed or service per manufacturer and ensure routing is correct and unobstructed.",
+      "Check for slippage under load and re-torque if necessary after short test ride."
+    ]
+  },
+  {
+    id: "g27",
+    title: "Replace Chainring — Alignment & Torque",
+    category: "Gears & Chain",
+    tools: ["Allen keys or chainring bolts tool","Torque wrench","Crank removal tool (if necessary)"],
+    safety: "Verify correct chainring tooth count and orientation before installation.",
+    steps:[
+      "Remove crank or access chainring bolts; keep track of spacers or directional arrows.",
+      "Compare new chainring with old for tooth count and ramp/pin placement (for shifting ramps).",
+      "Install chainring ensuring bolt holes align and use threadlocker lightly on bolts if manufacturer specifies.",
+      "Tighten bolts in a star pattern to the recommended torque to avoid warping.",
+      "Reinstall crank and check chainline and shifting under light pedaling.",
+      "If shifting is poor, adjust front derailleur height and limit screws.",
+      "Test ride and fine-tune shifting after initial usage."
+    ]
+  },
+  {
+    id: "g28",
+    title: "Wheelbuilding — Lacing Basics (Intro)",
+    category: "Wheels & Spokes",
+    tools: ["Spoke nipple driver","Tension meter (helpful)","Truing stand","Spoke wrench"],
+    safety: "Work carefully; spokes are sharp and can cause injury.",
+    steps:[
+      "Select correct spoke length using hub and rim specifications and spoke length calculator.",
+      "Start by installing spokes on the drive side in the correct cross pattern (commonly 3-cross for many wheels).",
+      "Lace non-drive side spokes following same pattern; hand-thread nipples and ensure uniform seating.",
+      "Bring wheel to approximate true by tightening spokes evenly, then put in truing stand to fine-tune.",
+      "Use small adjustments in tension; maintain consistent tension to avoid imbalance.",
+      "Stress-relieve wheel by squeezing pairs of spokes and flexing rim slightly to seat nipples.",
+      "Re-check tension and true; ride gently to allow settling and re-tension if needed."
+    ]
+  },
+  {
+    id: "g29",
+    title: "Troubleshoot Electronic Groupset Issues",
+    category: "Electrics & Electronics",
+    tools: ["Manufacturer diagnostic app/cable","Trim screwdriver","Spare batteries/charger"],
+    safety: "Handle electronics dry; avoid shorting connectors.",
+    steps:[
+      "Check battery charge level and ensure connectors are seated and dry.",
+      "Update firmware via manufacturer app and ensure components are running latest recommended firmware.",
+      "Check for loose or corroded connector pins and clean with contact cleaner if necessary.",
+      "Reset junction box or component per manufacturer instructions to resolve glitches.",
+      "If a single derailleur misbehaves, swap connections to isolate fault to a cable or derailleur.",
+      "Replace worn internals like pulleys or battery if diagnosis points to hardware failure.",
+      "If unresolved, consult manufacturer service or authorized dealer as electronic troubleshooting can require proprietary tools."
+    ]
+  },
+  {
+    id: "g30",
+    title: "Internal Cable Routing — Tips & Tricks",
+    category: "Frame & Routing",
+    tools: ["Fish tape or magnet cable puller","Lubricant","Fine picks","Tape"],
+    safety: "Protect frame paint when fishing cables; use protective tape where needed.",
+    steps:[
+      "Remove old cable sections and clean internal channels where possible.",
+      "Use fish tape to route from one port to the other, or use a strong magnet and small steel bolt if frame allows.",
+      "Attach cable to fish tape securely and pull through gently to avoid catching on corners.",
+      "Run housing inserts or protectors if frame requires to prevent wear and noise.",
+      "Trim housing to correct lengths before final routing; avoid sharp bends that increase friction.",
+      "Secure cables at stops with zip ties or frameset-specific clips to prevent rattles.",
+      "Test shifting/braking and adjust cable tension once installed fully."
+    ]
+  },
+  {
+    id: "g31",
+    title: "Bikepacking Mounts & Bag Fit (Load Balance)",
+    category: "Accessories",
+    tools: ["Straps","Anti-slip pads","Measuring tape","Hex keys"],
+    safety: "Keep weight low and centered; test handling before long trips.",
+    steps:[
+      "Position heavy items low and near the bike’s center of gravity (framebag or low pannier).",
+      "Use anti-slip pads and wide straps to prevent lateral movement of bags.",
+      "Check clearance from pedals and tyres — ensure nothing rubs at full compression.",
+      "Secure water bottles and small items inside zippered pockets to avoid shifting.",
+      "Test ride with intended load and adjust strap tension and distribution.",
+      "Ensure lights and reflectors remain visible after bag installation.",
+      "Periodically re-check mounting hardware during long rides."
+    ]
+  },
+  {
+    id: "g32",
+    title: "Replace Lights & Dynamo Systems",
+    category: "Electrics & Electronics",
+    tools: ["Screwdriver","Multimeter (for dynamos)","Soldering iron (occasionally)"],
+    safety: "Disconnect battery before wiring; isolate exposed wires.",
+    steps:[
+      "For battery lights: mount bracket securely, route wire if wired, and test operation before final securing.",
+      "For dynamo hubs: ensure correct polarity and connector seating; test with multimeter to verify output under wheel spin.",
+      "Secure cabling along fork or frame with zip ties and avoid areas where cables could snag.",
+      "Check switch and lens sealing against moisture; reseal or replace if failing.",
+      "If using USB or power banks, ensure proper voltage regulation and avoid overcurrent.",
+      "Test lights at night and adjust aim for legal and safe beam pattern.",
+      "Maintain dynamo bearings per pod manufacturer if serviceable."
+    ]
+  },
+  {
+    id: "g33",
+    title: "Quick Pre-Ride Safety Checklist (60-second routine)",
+    category: "General Maintenance",
+    tools: ["None — just quick checks!"],
+    safety: "Always perform checks before every ride to avoid preventable incidents.",
+    steps:[
+      "Check tyre pressure quickly by squeeze or gauge and ensure no cuts or bulges.",
+      "Squeeze front and rear brakes to verify firm lever and pad contact.",
+      "Check quick-release skewers or thru-axles are tight and closed.",
+      "Look for loose bolts on stem, seatpost, racks, and accessories.",
+      "Spin wheels to ensure no rub or play in hubs; listen for unusual noises.",
+      "Verify lights and reflectors are working if riding in low light.",
+      "Confirm you have ID, basic tools, spare tube/patch, and pump/CO₂."
+    ]
+  },
+  {
+    id: "g34",
+    title: "Chain Care — Deep Clean & Lube Routine",
+    category: "Gears & Chain",
+    tools: ["Chain degreaser","Brush","Chain scrubber (optional)","Chain lube"],
+    safety: "Keep degreaser away from paint and eyes; use gloves.",
+    steps:[
+      "Remove excess grime by wiping chain with a rag and shifting through gears.",
+      "Apply degreaser and scrub thoroughly with a brush or use a chain scrubber device.",
+      "Rinse or wipe clean and allow chain to dry completely before lubing.",
+      "Apply lube drop-by-drop to each link while slowly rotating pedals backward.",
+      "Let lube penetrate for several minutes then wipe off excess to prevent attracting dirt.",
+      "Clean chainrings and cassette using brush and degreaser to remove embedded grime.",
+      "Perform this routine regularly depending on riding conditions (more often in wet conditions)."
+    ]
+  },
+  {
+    id: "g35",
+    title: "Remove Rust & Protect Frame (Cosmetic)",
+    category: "Frame & Routing",
+    tools: ["Steel wool or fine abrasive","Rust converter or remover","Touch-up paint","Wax or protective spray"],
+    safety: "Work in ventilated area and wear gloves and eye protection.",
+    steps:[
+      "Assess the extent of rust; if structural rust exists consult a professional.",
+      "Sand rust down to bare metal using steel wool or fine abrasive, removing flaky corrosion.",
+      "Apply rust converter if necessary to neutralize remaining oxidation and follow instructions.",
+      "Prime and touch-up paint small affected areas to prevent recurrence.",
+      "Apply wax or protective spray to painted surfaces and inspected areas to provide barrier.",
+      "Avoid using harsh cleaners that remove protective coatings; reapply protective spray periodically.",
+      "For heavy frame corrosion, consider consulting a frame builder or replacement options."
+    ]
+  },
+  {
+    id: "g36",
+    title: "Replace Reflectors & Lights (Visibility Restored)",
+    category: "Accessories",
+    tools: ["Screwdriver","Zip ties","Electrical tape"],
+    safety: "Ensure visibility does not obstruct helmet or cyclist movement.",
+    steps:[
+      "Remove old reflectors and clean mounting area.",
+      "Mount new reflectors at recommended angles for visibility (rear-facing red, side reflective strips on frame).",
+      "Install lights and route wires neatly; secure with zip ties and avoid moving parts.",
+      "Test light modes and battery life; replace batteries or recharge before rides.",
+      "Check alignment and ensure lights are not obstructed by racks or bags.",
+      "Use high-visibility accessories such as reflective vests for night rides in addition to lights.",
+      "Periodically check mounting hardware to ensure reflectors stay in place."
+    ]
+  },
+  {
+    id: "g37",
+    title: "Diagnose Wheel Hubs — Noise & Play",
+    category: "Wheels & Spokes",
+    tools: ["Cone spanners","Grease","Torque wrench","Replacement bearings optional"],
+    safety: "Do not over-tighten cones; ensure smooth bearing preload.",
+    steps:[
+      "Spin wheel and listen for grinding, clicking or hissing noises to localize issue.",
+      "Check lateral play by wiggling rim side-to-side while axle is in dropouts.",
+      "If play present, adjust cone preload by loosening locknut and rotating cone slightly until play removes but wheel spins freely.",
+      "If grinding noise or roughness occurs, disassemble hub and inspect bearings and cups for pitting.",
+      "Replace bearings if pitted and pack with fresh grease during reassembly.",
+      "Reinstall axle and check for proper preload and torque on axle nuts or quick-release.",
+      "If hub is sealed and noisy, consider replacing sealed cartridge bearings or hub service per manufacturer."
+    ]
+  },
+  {
+    id: "g38",
+    title: "Check & Replace Brake Cables (Long-Term Maintenance)",
+    category: "Brakes",
+    tools: ["Cable cutters","New cables & ferrules","Lubricant"],
+    safety: "Route cables away from moving parts and use end caps to prevent fray.",
+    steps:[
+      "Inspect cable housings for cracks, kinks or cracking inner liners — these increase friction.",
+      "Replace both cable and housing sections if stiffness or corrosion present for reliable braking.",
+      "Use proper ferrules and ensure housing seats fully in stops to prevent compression.",
+      "Lubricate inner cable lightly before installing to reduce friction and improve lever feel.",
+      "Cut cable to length, secure at caliper or lever and crimp an end cap.",
+      "Adjust brake tension and test lever feel and stopping power.",
+      "Check periodically for rust or fray and replace before catastrophic failure."
+    ]
+  },
+  {
+    id: "g39",
+    title: "Install Clipless Pedals & Cleats — Float & Tension Setup",
+    category: "Pedals & Shoes",
+    tools: ["Hex keys or pedal wrench","Cleat bolts and shims","Torque wrench"],
+    safety: "Set release tension low for first rides to avoid falls until you are comfortable.",
+    steps:[
+      "Install pedals to cranks noting left (reverse thread) and right orientation; grease threads to prevent seizing.",
+      "Mount cleats to shoes and set fore/aft and rotation to comfort — start neutral and adjust gradually.",
+      "Adjust cleat float per shoe/cleat system to balance release angle and knee comfort.",
+      "Set pedal tension to minimum for first rides and gradually increase as confidence grows.",
+      "Practice clipping in and out in a safe area before riding amongst traffic.",
+      "If experiencing knee pain, adjust cleat position and float; consider professional bike-fit.",
+      "Regularly check cleat bolts for tightness and replace worn cleats."
+    ]
+  },
+  {
+    id: "g40",
+    title: "Full Safety Inspection — Pre-Long Ride Checklist",
+    category: "General Maintenance",
+    tools: ["Multitool","Pump","Spare tube/patch","Lights & ID"],
+    safety: "Never skip these on long rides; small prevention avoids big problems.",
+    steps:[
+      "Check tyre pressures and inspect for cuts, bulges or embedded objects.",
+      "Verify brake pads and levers are working and not excessively worn.",
+      "Ensure quick-releases and thru-axles are secure and wheels aligned.",
+      "Test shifting through full cassette and chainring ranges to avoid surprises.",
+      "Pack essentials: spare tube/patch kit, pump/CO₂, multitool, chain tool and ID/phone.",
+      "Verify lights and electronics have adequate charge and carry cash/ID for emergencies.",
+      "Tell someone your route or use location-sharing for long or remote rides."
+    ]
+  }
+];
+
+/* -------------------------
+   UTILITY: collect categories & tools (unique)
+   ------------------------- */
+const categoriesSet = new Set();
+const toolsSet = new Set();
+tutorials.forEach(t=>{
+  categoriesSet.add(t.category);
+  t.tools.forEach(tool => toolsSet.add(tool));
+});
+const categories = Array.from(categoriesSet).sort();
+const tools = Array.from(toolsSet).sort();
+
+/* -------------------------
+   RENDER UI: inject tutorials and TOC
+   ------------------------- */
+const libraryEl = document.getElementById('library');
+const tocList = document.getElementById('tocList');
+const categoryFilter = document.getElementById('categoryFilter');
+const toolFilter = document.getElementById('toolFilter');
+const searchInput = document.getElementById('searchInput');
+const resultCountEl = document.getElementById('resultCount');
+
+// populate filters
+function populateFilters(){
+  categories.forEach(cat=>{
+    const opt = document.createElement('option'); opt.value = cat; opt.textContent = cat;
+    categoryFilter.appendChild(opt);
+  });
+  tools.forEach(tool=>{
+    const opt = document.createElement('option'); opt.value = tool; opt.textContent = tool;
+    toolFilter.appendChild(opt);
+  });
+}
+populateFilters();
+
+// Create guide cards
+function createGuideCard(t){
+  const card = document.createElement('article');
+  card.className = 'guide-card';
+  card.id = t.id;
+  card.setAttribute('data-category', t.category);
+  card.setAttribute('data-tools', t.tools.join('|').toLowerCase());
+
+  const head = document.createElement('div');
+  head.className = 'guide-head';
+  head.setAttribute('role','button');
+  head.setAttribute('tabindex','0');
+  head.setAttribute('aria-expanded','false');
+  head.innerHTML = `<h4>${t.title}</h4><div class="meta-tags">${t.category} • ${t.tools.join(', ')}</div>`;
+
+  const body = document.createElement('div');
+  body.className = 'guide-body';
+  body.setAttribute('aria-hidden','true');
+
+  // tools & safety
+  const toolsEl = document.createElement('div');
+  toolsEl.className = 'tools';
+  toolsEl.textContent = 'Tools: ' + t.tools.join(', ');
+
+  const safetyEl = document.createElement('div');
+  safetyEl.className = 'safety';
+  safetyEl.textContent = 'Safety: ' + t.safety;
+
+  // steps
+  const ol = document.createElement('ol');
+  t.steps.forEach(s=>{
+    const li = document.createElement('li'); li.textContent = s;
+    ol.appendChild(li);
+  });
+
+  body.appendChild(toolsEl);
+  body.appendChild(safetyEl);
+  body.appendChild(ol);
+
+  // attach toggle behavior
+  head.addEventListener('click', ()=>{
+    const isOpen = body.classList.contains('open');
+    if(isOpen) closeCard(body, head);
+    else openCard(body, head);
+  });
+  head.addEventListener('keydown', (ev)=>{
+    if(ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); head.click(); }
+  });
+
+  card.appendChild(head);
+  card.appendChild(body);
+  return card;
+}
+
+function openCard(body, head){
+  body.classList.add('open'); body.setAttribute('aria-hidden','false');
+  if(head) head.setAttribute('aria-expanded','true');
+  else if(body.previousElementSibling) body.previousElementSibling.setAttribute('aria-expanded','true');
+}
+function closeCard(body, head){
+  body.classList.remove('open'); body.setAttribute('aria-hidden','true');
+  if(head) head.setAttribute('aria-expanded','false');
+  else if(body.previousElementSibling) body.previousElementSibling.setAttribute('aria-expanded','false');
+}
+
+// inject cards and TOC links
+tutorials.forEach(t=>{
+  const card = createGuideCard(t);
+  libraryEl.appendChild(card);
+  const a = document.createElement('a');
+  a.href = '#'+t.id;
+  a.textContent = t.title;
+  a.addEventListener('click',(e)=>{
+    e.preventDefault();
+    const target = document.getElementById(t.id);
+    const body = target.querySelector('.guide-body');
+    openCard(body, target.querySelector('.guide-head'));
+    target.scrollIntoView({behavior:'smooth', block:'center'});
+  });
+  tocList.appendChild(a);
+});
+
+// initial open first card
+const firstBody = document.querySelector('.guide-card .guide-body');
+if(firstBody) {
+  firstBody.classList.add('open');
+  firstBody.previousElementSibling && firstBody.previousElementSibling.setAttribute('aria-expanded','true');
+}
+
+/* -------------------------
+   SEARCH + FILTER logic
+   ------------------------- */
+function getVisibleCount(){
+  return document.querySelectorAll('.guide-card:not([style*="display: none"])').length;
+}
+function updateResultCount(){ resultCountEl.textContent = getVisibleCount(); }
+
+function filterAll(){
+  const q = searchInput.value.trim().toLowerCase();
+  const cat = categoryFilter.value;
+  const tool = toolFilter.value.toLowerCase();
+
+  document.querySelectorAll('.guide-card').forEach(card=>{
+    const title = card.querySelector('h4').textContent.toLowerCase();
+    const tools = card.getAttribute('data-tools') || '';
+    const bodyText = card.innerText.toLowerCase();
+    const matchesSearch = q === '' || title.includes(q) || bodyText.includes(q) || tools.includes(q);
+    const matchesCategory = (cat === 'all') || (card.getAttribute('data-category') === cat);
+    const matchesTool = (tool === 'all') || (tools.includes(tool));
+    const show = matchesSearch && matchesCategory && matchesTool;
+    card.style.display = show ? '' : 'none';
+  });
+  updateResultCount();
+}
+
+// wire filter events
+searchInput.addEventListener('input', filterAll);
+categoryFilter.addEventListener('change', filterAll);
+toolFilter.addEventListener('change', filterAll);
+
+/* -------------------------
+   Expand/Collapse all
+   ------------------------- */
+document.getElementById('expandAllBtn').addEventListener('click', ()=>{
+  document.querySelectorAll('.guide-body').forEach(b=>{ openCard(b, b.previousElementSibling); });
+});
+document.getElementById('collapseAllBtn').addEventListener('click', ()=>{
+  document.querySelectorAll('.guide-body').forEach(b=>{ closeCard(b, b.previousElementSibling); });
+});
+
+/* -------------------------
+   Copy link
+   ------------------------- */
+document.getElementById('copyLinkBtn').addEventListener('click', async ()=>{
+  try{
+    await navigator.clipboard.writeText(location.href);
+    alert('Page link copied to clipboard!');
+  }catch(e){
+    prompt('Copy this link:', location.href);
+  }
+});
+
+/* -------------------------
+   Theme toggle (persist)
+   ------------------------- */
+const themeToggle = document.getElementById('themeToggle');
+const savedTheme = localStorage.getItem('fixmybike_theme');
+if(savedTheme === 'dark') document.documentElement.setAttribute('data-theme','dark');
+
+themeToggle.addEventListener('click', ()=>{
+  const current = document.documentElement.getAttribute('data-theme');
+  if(current === 'dark'){
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('fixmybike_theme','light');
+  } else {
+    document.documentElement.setAttribute('data-theme','dark');
+    localStorage.setItem('fixmybike_theme','dark');
+  }
+});
+
+/* -------------------------
+   Back to top button
+   ------------------------- */
+const backBtn = document.getElementById('backToTop');
+window.addEventListener('scroll', ()=>{
+  if(window.scrollY > 400) backBtn.style.display = 'block';
+  else backBtn.style.display = 'none';
+});
+backBtn.addEventListener('click', ()=> window.scrollTo({top:0,behavior:'smooth'}) );
+
+/* -------------------------
+   On load: update result count
+   ------------------------- */
+window.addEventListener('load', ()=>{
+  updateResultCount();
+  // focus search input for convenience
+  // searchInput.focus();
+});
+</script>
+</body>
+</html>
