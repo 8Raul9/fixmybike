@@ -1012,5 +1012,104 @@
     // --- Accessibility: allow focusing guide-heads ---
     document.querySelectorAll('.guide-head').forEach(h => h.setAttribute('tabindex','0'));
   </script>
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const guides = document.querySelectorAll('.guide-card');
+  const tocList = document.getElementById('tocList');
+  const searchInput = document.getElementById('searchInput');
+  const resultCount = document.getElementById('resultCount');
+  const expandAllBtn = document.getElementById('expandAllBtn');
+  const collapseAllBtn = document.getElementById('collapseAllBtn');
+  const copyLinkBtn = document.getElementById('copyLinkBtn');
+  const themeToggle = document.getElementById('themeToggle');
+  const body = document.body;
+
+  // 1️⃣ Generare TOC automat
+  guides.forEach((guide, i) => {
+    const h4 = guide.querySelector('h4').textContent;
+    const a = document.createElement('a');
+    a.href = `#${guide.id}`;
+    a.textContent = h4;
+    tocList.appendChild(a);
+  });
+
+  // 2️⃣ Expand/Collapse card la click
+  guides.forEach(guide => {
+    const head = guide.querySelector('.guide-head');
+    const body = guide.querySelector('.guide-body');
+
+    const toggle = () => {
+      const isOpen = body.classList.contains('open');
+      body.classList.toggle('open', !isOpen);
+      head.setAttribute('aria-expanded', !isOpen);
+      body.setAttribute('aria-hidden', isOpen);
+    }
+
+    head.addEventListener('click', toggle);
+    head.addEventListener('keypress', (e) => {
+      if(e.key === 'Enter' || e.key === ' ') toggle();
+    });
+  });
+
+  // 3️⃣ Expand/Collapse All
+  expandAllBtn.addEventListener('click', () => {
+    guides.forEach(guide => {
+      const body = guide.querySelector('.guide-body');
+      const head = guide.querySelector('.guide-head');
+      body.classList.add('open');
+      head.setAttribute('aria-expanded', true);
+      body.setAttribute('aria-hidden', false);
+    });
+  });
+
+  collapseAllBtn.addEventListener('click', () => {
+    guides.forEach(guide => {
+      const body = guide.querySelector('.guide-body');
+      const head = guide.querySelector('.guide-head');
+      body.classList.remove('open');
+      head.setAttribute('aria-expanded', false);
+      body.setAttribute('aria-hidden', true);
+    });
+  });
+
+  // 4️⃣ Search filter
+  searchInput.addEventListener('input', () => {
+    const query = searchInput.value.toLowerCase();
+    let visible = 0;
+    guides.forEach(guide => {
+      const text = guide.innerText.toLowerCase();
+      const match = text.includes(query);
+      guide.style.display = match ? '' : 'none';
+      if(match) visible++;
+    });
+    resultCount.textContent = visible;
+  });
+
+  // 5️⃣ Copy page link
+  copyLinkBtn.addEventListener('click', () => {
+    navigator.clipboard.writeText(window.location.href)
+      .then(() => alert('Link copied to clipboard!'))
+      .catch(() => alert('Failed to copy link.'));
+  });
+
+  // 6️⃣ Toggle Dark Mode
+  themeToggle.addEventListener('click', () => {
+    const current = body.getAttribute('data-theme');
+    if(current === 'dark'){
+      body.removeAttribute('data-theme');
+    } else {
+      body.setAttribute('data-theme','dark');
+    }
+  });
+
+  // 7️⃣ Back to Top Button
+  const backBtn = document.createElement('button');
+  backBtn.id = 'backToTop';
+  backBtn.textContent = '↑ Top';
+  document.body.appendChild(backBtn);
+  backBtn.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+});
+</script>
+
 </body>
 </html>
